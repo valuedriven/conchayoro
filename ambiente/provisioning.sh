@@ -53,12 +53,3 @@ NODE_ENV=development npm --prefix frontend run build
 cp -r frontend/dist/* /usr/share/nginx/html/
 cp frontend/nginx/default.conf.template /etc/nginx/templates/
 service nginx restart
-
-echo "Config MySQL and config DB"
-echo "-------------------------"
-#grep 'temporary password' /var/log/mysqld.log
-#2020-11-18T15:17:13.884662Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: ujtBqhNzE0>8
-#mysql_secure_installation -p'ujtBqhNzE0>8'
-#systemctl enable --now mysqld
-#mysql -uroot -p
-#mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'secretStr0ngPassw0rd!';
