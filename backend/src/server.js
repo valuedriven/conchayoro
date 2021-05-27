@@ -1,20 +1,34 @@
-const Environment = require('./util/environment');
-Environment.init();
-const logger = require('./util/logger');
-logger.info(`app.js - inicializando`);
-logger.debug(`NODE_ENV ${process.env.NODE_ENV}`);
-logger.debug(`LOG_LEVEL ${process.env.LOG_LEVEL}`);
-logger.debug(`DB_HOSTNAME ${process.env.DB_HOSTNAME}`);
-logger.debug(`DB_PORT ${process.env.DB_PORT}`);
-logger.debug(`DB_NAME ${process.env.DB_NAME}`);
-logger.debug(`DB_USERNAME ${process.env.DB_USERNAME}`);
+console.log("Inicializando servidor...")
 
-const app = require('./app');
+const envpath = process.env.NODE_ENV === undefined  ? '.env.development' : `.env.${process.env.NODE_ENV}`;
 
-logger.info(`server.js - inicializando`);
+require('dotenv').config({  
+  path: envpath
+})
 
-const port = process.env.BACKEND_PORT || 3000;
+console.log("Inspecionando variáveis de banco de dados...");
+console.log(process.env.DB_HOSTNAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, process.env.DB_PORT, process.env.DB_DIALECT);
 
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const db = require("./models");
+
+const app = express();
+
+app.use(cors());
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+db.sequelize.sync();
+
+app.get("/", (req, res) => {
+  res.json({ message: "Bem-vindo(a) ao backend do ConchayOro!" });
+});
+
+require("./routers/produto.router")(app);
+const port = process.env.BACKEND_PORT;
 app.listen(port, () => {
-  logger.info(`app.js - aplicação em execução na porta ${port}`);
+  console.log(`Servidor está em execução na porta ${port}`);
 });
