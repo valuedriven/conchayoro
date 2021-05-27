@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export NODE_ENV=production
-export HOST=localhost
+export HOST=$HOSTNAME
 export PORT=80
 export BACKEND_HOST=$HOSTNAME
 export BACKEND_PORT=3000
