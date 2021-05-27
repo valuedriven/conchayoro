@@ -55,13 +55,13 @@ cd backend
 npm install
 nohup node src/server.js > /dev/null 2>&1 &
 
-cd frontend
+cd ..
 #Instalar frontend
-#export NODE_ENV=development
-npm install
-npm run serve
+export NODE_ENV=development
+npm --prefix frontend install
+npm --prefix frontend run build
 export NODE_ENV=production
-#cp -r frontend/dist/* /usr/share/nginx/html/
-#mkdir /etc/nginx/templates/
-#cp frontend/nginx/default.conf.template /etc/nginx/templates/
-#service nginx restart
+cp -r frontend/dist/* /usr/share/nginx/html/
+mkdir /etc/nginx/templates/
+cp frontend/nginx/default.conf.template /etc/nginx/templates/
+service nginx restart
