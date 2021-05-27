@@ -15,8 +15,8 @@ echo "-------------------------"
 amazon-linux-extras enable nginx1
 yum install nginx -y
 chkconfig nginx on
-service nginx start
-service nginx status
+#service nginx start
+#service nginx status
 
 echo "Install MySQL"
 echo "-------------------------"
@@ -43,7 +43,7 @@ echo "Install backend"
 echo "-------------------------"
 cd backend
 npm install
-pm2-runtime ./process.yml
+npx pm2 start src/server.js
 cd ..
 
 echo "Install frontend"
@@ -51,5 +51,8 @@ echo "-------------------------"
 npm --prefix frontend install
 NODE_ENV=development npm --prefix frontend run build
 cp -r frontend/dist/* /usr/share/nginx/html/
+mkdir /etc/nginx/templates/
 cp frontend/nginx/default.conf.template /etc/nginx/templates/
-service nginx restart
+service nginx start
+service nginx status
+
