@@ -16,11 +16,11 @@ yum install git -y
 
 # Install Nginx
 #-------------------------
-amazon-linux-extras enable nginx1
-yum install nginx -y
-chkconfig nginx on
-service nginx start
-service nginx status
+#amazon-linux-extras enable nginx1
+#yum install nginx -y
+#chkconfig nginx on
+#service nginx start
+#service nginx status
 
 #Install MySQL
 #-------------------------
@@ -31,7 +31,7 @@ chkconfig mysqld on
 service mysqld start
 service mysqld status
 
-#Config DB
+#Config MySQL and config DB
 #grep 'temporary password' /var/log/mysqld.log
 #2020-11-18T15:17:13.884662Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: ujtBqhNzE0>8
 #mysql_secure_installation -p'ujtBqhNzE0>8'
@@ -44,19 +44,24 @@ service mysqld status
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 . ~/.nvm/nvm.sh
 nvm install node
-node -e "console.log('Running Node.js ' + process.version)"
+node --version
 
-#Instalar frontend
+#Obter App
 git clone https://github.com/valuedriven/conchayoro.git
 cd conchayoro
 
-npm --prefix backend install
+#Instalar backend
+cd backend
+npm install
 nohup node src/server.js > /dev/null 2>&1 &
 
-npm --prefix frontend install
-npm --prefix frontend run build
-cp -r frontend/dist/* /usr/share/nginx/html/
-cp frontend/nginx/default.conf.template /etc/nginx/templates/default.conf.template
-service nginx restart
-
-
+cd frontend
+#Instalar frontend
+#export NODE_ENV=development
+npm install
+npm run serve
+export NODE_ENV=production
+#cp -r frontend/dist/* /usr/share/nginx/html/
+#mkdir /etc/nginx/templates/
+#cp frontend/nginx/default.conf.template /etc/nginx/templates/
+#service nginx restart

@@ -1,9 +1,12 @@
-console.log('vue.config.js');
 const envpath = process.env.NODE_ENV === undefined  ? '.env.development' : `.env.${process.env.NODE_ENV}`;
+console.log('vue.config.js');
+console.log('envpath',envpath);
 
 require('dotenv').config({  
   path: envpath
 })
+
+
 
 module.exports = {
 

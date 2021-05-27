@@ -27,3 +27,5 @@ pnpm-debug.log*
 *.sqlite
 .credenciais
 
+localhost.session.sql
+teste.session.sql
