@@ -5,6 +5,8 @@ export HOST=$HOSTNAME
 export PORT=80
 export BACKEND_HOST=$HOSTNAME
 export BACKEND_PORT=3000
+export VUE_APP_SERVER_HOST=$HOSTNAME
+export VUE_APP_SERVER_PORT=3000
 
 echo "Install git"
 echo "-------------------------"
@@ -20,7 +22,7 @@ chkconfig nginx on
 
 echo "Install MySQL"
 echo "-------------------------"
-yum install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm -y
+yum install https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm -y
 amazon-linux-extras install epel -y
 yum install mysql-community-server -y
 chkconfig mysqld on
