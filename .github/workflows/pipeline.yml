@@ -1,0 +1,57 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  ANSIBLE_REMOTE_USER: ec2-user
+  ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
+  ANSIBLE_HOST_KEY_CHECKING: 'False'
+  PROJECT_NAME: conchayoro
+  DATABASE_PROJECT: db
+  BACKEND_PROJECT: backend
+  FRONTEND_PROJECT: frontend
+  TAG: latest
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run:  npm install --prefix=backend --only=dev
+    - run:  npm install --prefix=frontend --only=dev
+    - run:  npm run eslint:sonar
+    - run:  npm run test:unit:sonar
+
+  build-image-db:
+    runs-on: docker-latest
+    env:
+      DATABASE_IMAGE: ${{ PROJECT_NAME }}/${{ DATABASE_PROJECT }}:${{ TAG }}
+    steps:
+    - run: docker build -t ${{ DATABASE_IMAGE }} ${{ DATABASE_PROJECT }}
+  
+
+  build-image-frontend:
+    runs-on: docker-latest
+    env:
+      FRONTEND_IMAGE: ${{ PROJECT_NAME }}/${{ FRONTEND_PROJECT }}:${{ TAG }}
+    steps:
+    - run: docker build -t ${{ FRONTEND_IMAGE }} ${{ FRONTEND_PROJECT }}
+
+  build-image-backend:
+    runs-on: docker-latest
+    env:
+      BACKEND_IMAGE: ${{ PROJECT_NAME }}/${{ BACKEND_PROJECT }}:${{ TAG }}
+    steps:
+    - run: docker build -t ${{ BACKEND_IMAGE }} ${{ BACKEND_PROJECT }}
+
+

@@ -2,8 +2,6 @@ services:
   - docker:dind
 
 variables:
-  # AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-  # AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   ANSIBLE_REMOTE_USER: ec2-user
   ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
   ANSIBLE_HOST_KEY_CHECKING: 'False'

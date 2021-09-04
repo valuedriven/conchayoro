@@ -29,3 +29,6 @@ pnpm-debug.log*
 ambiente/credentials
 ambiente/conchayoro-key
 ambiente/conchayoro-key.pub
+package-lock.json
+package-lock.json
+backend/package-lock.json
