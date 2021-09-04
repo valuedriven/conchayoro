@@ -33,6 +33,7 @@ jobs:
     - run:  npm run test:unit:sonar
 
   build-image-db:
+    needs: build
     runs-on: docker-latest
     env:
       DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
@@ -41,6 +42,7 @@ jobs:
   
 
   build-image-frontend:
+    needs: build
     runs-on: docker-latest
     env:
       FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
@@ -48,6 +50,7 @@ jobs:
     - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
   build-image-backend:
+    needs: build  
     runs-on: docker-latest
     env:
       BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
