@@ -1,0 +1,136 @@
+services:
+  - docker:dind
+
+variables:
+  # AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  # AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  ANSIBLE_REMOTE_USER: ec2-user
+  ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
+  ANSIBLE_HOST_KEY_CHECKING: 'False'
+  PROJECT_NAME: conchayoro
+  DATABASE_PROJECT: db
+  BACKEND_PROJECT: backend
+  FRONTEND_PROJECT: frontend
+  TAG: latest
+  
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - backend/node_modules/
+    - frontend/node_modules/
+    - public/
+    - vendor/
+  policy: pull-push
+
+stages:
+  - build
+  - package
+  - push
+  - aceite
+  - producao
+
+test:
+  image: node:latest
+  stage: build
+  script:    
+    - npm install --only=dev
+    - npm install --prefix=backend --only=dev
+    - npm install --prefix=frontend --only=dev
+    - npm run eslint:sonar
+    - npm run test:unit:sonar
+  coverage: /All\sfiles.*?\s+(\d+.\d+)/  
+  allow_failure: true
+  artifacts:
+    reports:
+      junit: tmp/junit.xml
+
+build-image-db:
+  image: docker:latest
+  stage: package
+  variables:    
+    DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
+  script:    
+    - docker build -t $DATABASE_IMAGE db
+          
+build-image-backend:
+  image: docker:latest
+  stage: package
+  variables:    
+    BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
+  script:    
+    - docker build -t $BACKEND_IMAGE backend
+
+build-image-frontend:
+  image: docker:latest
+  stage: package
+  variables:  
+    FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
+  script:    
+    - docker build -t $FRONTEND_IMAGE frontend
+    
+push-images:
+  image: golang:1.15-alpine
+  stage: push
+  before_script:
+    - apk add --no-cache git python3 py3-pip ansible
+    - go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+  script:    
+    - ansible-playbook ambiente/push-images.yml
+
+# deployment-production:
+#   image: alpine:latest
+#   stage: production
+#   variables:
+#     ACCESS_KEY: $PROJECT_NAME
+#     NODE_ENV: production    
+#   before_script:
+#     # - apk add --no-cache openssh aws-cli py3-boto3 ansible
+#     - apk add --no-cache openssh py3-boto3 ansible
+#     - ssh-keygen -t rsa -N "" -f ${ACCESS_KEY}
+#     - chmod 400 ${ACCESS_KEY}.pub
+#     - cp ${ACCESS_KEY}.* ambiente/
+#     - ansible-galaxy collection install community.aws
+#     # - > 
+#     #   aws ec2-instance-connect send-ssh-public-key
+#     #   --instance-id ${INSTANCE_ID}
+#     #   --availability-zone ${AVAILABILITY_ZONE}
+#     #   --instance-os-user ${INSTANCE_USER}
+#     #   --ssh-public-key file://${ACCESS_KEY}.pub
+#   script:
+#     - ansible --version
+#     - ansible-playbook -i localhost ambiente/provisioning.yml
+#     - ansible-playbook -i ${INSTANCE_IP}, -u ${INSTANCE_USER}  --private-key ${ACCESS_KEY}  ambiente/deploy.yml --ssh-common-args='-o StrictHostKeyChecking=no'
+    
+#   rules:
+#     - when: manual
+
+deployment-cloud:
+  image: python:3.9.2-alpine3.13
+  stage: production
+  variables:
+    ANSIBLE_REMOTE_USER: ec2-user
+    ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
+    ANSIBLE_HOST_KEY_CHECKING: False
+  before_script:
+    # - apt install amazon-ecr-credential-helper
+    - apk add --no-cache git python3 py3-pip ansible
+    # - ansible-galaxy collection install -r ambiente/requirements.yml
+  script:
+    - ansible-playbook ambiente/keys.yml
+    - ansible-playbook ambiente/provisioning.yml
+    - ansible-playbook ambiente/install-packages.yml --inventory ambiente/inventory.aws_ec2.yml
+    - ansible-playbook ambiente/deploy-images.yml --inventory ambiente/inventory.aws_ec2.yml
+
+deployment-kops:
+  image: python:3.9.2-alpine3.13
+  stage: production    
+  before_script:
+    - apk add --no-cache aws-cli ansible
+    - apk add --no-cache kops kubectl --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
+  script:
+    - ansible-playbook ambiente/cluster.yml
+    # - kops create cluster --name $NAME --zones=sa-east-1a  --yes
+    - kubectl get nodes
+    - kops validate cluster
+

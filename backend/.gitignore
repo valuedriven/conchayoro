@@ -1,10 +1,6 @@
 .DS_Store
 node_modules
 /dist
-coverage
-*.log
-.scannerwork
-tmp/*
 
 # local env files
 .env.local
@@ -15,6 +11,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log*
 
 # Editor directories and files
 .idea
@@ -24,8 +21,3 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-*.sqlite
-.credenciais
-ambiente/credentials
-ambiente/conchayoro-key
-ambiente/conchayoro-key.pub

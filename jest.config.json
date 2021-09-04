@@ -1,0 +1,34 @@
+{
+  "roots": [
+    "."
+  ],
+  "reporters": [
+    "default",
+    [ "jest-junit", { "outputDirectory": "tmp" } ]
+],
+  "collectCoverage": true,
+  "coverageDirectory": "tmp/coverage",
+  "collectCoverageFrom": [
+    "**/backend/src/util/*.js",
+    "!**/node_modules/**",
+    "!**/coverage/**",
+    "!**/builds/**",
+    "!**/src/database/**",
+    "!**/src/test/**",
+    "!frontend/**"
+  ],  
+  "coverageThreshold": {
+    "global": {
+      "branches": 0,
+      "functions": 0,
+      "lines": 0,
+      "statements": 0
+    },
+    "backend/src/util": {
+      "branches": 0,
+      "functions": 0,
+      "lines": 0,
+      "statements": 0
+    }
+  }
+}
