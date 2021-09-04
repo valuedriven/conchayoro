@@ -35,23 +35,23 @@ jobs:
   build-image-db:
     runs-on: docker-latest
     env:
-      DATABASE_IMAGE: ${{ PROJECT_NAME }}/${{ DATABASE_PROJECT }}:${{ TAG }}
+      DATABASE_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}
     steps:
-    - run: docker build -t ${{ DATABASE_IMAGE }} ${{ DATABASE_PROJECT }}
+    - run: docker build -t ${{ env.DATABASE_IMAGE }} ${{ env.DATABASE_PROJECT }}
   
 
   build-image-frontend:
     runs-on: docker-latest
     env:
-      FRONTEND_IMAGE: ${{ PROJECT_NAME }}/${{ FRONTEND_PROJECT }}:${{ TAG }}
+      FRONTEND_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.FRONTEND_PROJECT }}:${{ env.TAG }}
     steps:
-    - run: docker build -t ${{ FRONTEND_IMAGE }} ${{ FRONTEND_PROJECT }}
+    - run: docker build -t ${{ env.FRONTEND_IMAGE }} ${{ env.FRONTEND_PROJECT }}
 
   build-image-backend:
     runs-on: docker-latest
     env:
-      BACKEND_IMAGE: ${{ PROJECT_NAME }}/${{ BACKEND_PROJECT }}:${{ TAG }}
+      BACKEND_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.BACKEND_PROJECT }}:${{ env.TAG }}
     steps:
-    - run: docker build -t ${{ BACKEND_IMAGE }} ${{ BACKEND_PROJECT }}
+    - run: docker build -t ${{ env.BACKEND_IMAGE }} ${{ env.BACKEND_PROJECT }}
 
 
