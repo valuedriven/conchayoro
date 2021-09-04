@@ -35,23 +35,56 @@ jobs:
   build-image-db:
     runs-on: docker-latest
     env:
-      DATABASE_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}
+      DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
     steps:
-    - run: docker build -t ${{ env.DATABASE_IMAGE }} ${{ env.DATABASE_PROJECT }}
+    - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
 
   build-image-frontend:
     runs-on: docker-latest
     env:
-      FRONTEND_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.FRONTEND_PROJECT }}:${{ env.TAG }}
+      FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
     steps:
-    - run: docker build -t ${{ env.FRONTEND_IMAGE }} ${{ env.FRONTEND_PROJECT }}
+    - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
   build-image-backend:
     runs-on: docker-latest
     env:
-      BACKEND_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.BACKEND_PROJECT }}:${{ env.TAG }}
+      BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
     steps:
-    - run: docker build -t ${{ env.BACKEND_IMAGE }} ${{ env.BACKEND_PROJECT }}
+    - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
+  # push-images:
+  #   uses: actions/setup-go@v2.1.4
+  #   steps:
+  #   - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+  #   - uses: ./.github/actions/ansible
+  #     with: 
+  #       playbook: ambiente/push-images.yml
+  #       inventory: localhost
+    
+  # deployment-cloud:
+  #   env:
+  #     ANSIBLE_REMOTE_USER: ec2-user
+  #     ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
+  #     ANSIBLE_HOST_KEY_CHECKING: False
+  #   steps:
+  #     - uses: ./.github/actions/ansible
+  #       with: 
+  #         playbook: ambiente/keys.yml
+  #         inventory: localhost
 
+  #     - uses: ./.github/actions/ansible
+  #       with: 
+  #         playbook: ambiente/provisioning.yml
+  #         inventory: localhost
+
+  #     - uses: ./.github/actions/ansible
+  #       with: 
+  #         playbook: ambiente/install-packages.yml
+  #         inventory: ambiente/inventory.aws_ec2.yml
+
+  #     - uses: ./.github/actions/ansible
+  #       with: 
+  #         playbook: ambiente/deploy-images.yml
+  #         inventory: ambiente/inventory.aws_ec2.yml          
