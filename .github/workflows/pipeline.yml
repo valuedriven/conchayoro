@@ -11,7 +11,7 @@ env:
   TAG: latest
   PROJECT_NAME: conchayoro
   DATABASE_PROJECT: db
-  DATABASE_IMAGE: '${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}'
+  DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
   BACKEND_PROJECT: backend
   FRONTEND_PROJECT: frontend
   
