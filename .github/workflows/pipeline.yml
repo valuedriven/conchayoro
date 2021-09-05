@@ -27,32 +27,19 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
-        cache: 'npm'
-    - uses: actions/cache@v2
-      env:
-        cache-name: cache-node-modules
-      with:
-          path: |
-            ~/.npm
-            db
-            frontend/node_modules
-            backend/node_modules
-            backend/package*.json
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+        cache: 'npm'    
     - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
     - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
     - run: npm run eslint
     - run: npm ci --prefix=backend
     - run: npm ci --prefix=frontend
     - run: npm run build --prefix=frontend
-    #- run: npm run test:unit -- --passWithNoTests
+    - uses: actions/cache@v2            
+      with:
+        path: ./*
+        key: ${{ github.sha }}          
     - uses: actions/upload-artifact@v2
       with:
-        name: dist-without-markdown
         path: |
           frontend/dist
     
@@ -60,6 +47,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - run: ls -la
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
   build-image-frontend:
