@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production npm run serve"
   },
   "dependencies": {
+    "@popperjs/core": "^2.10.1",
     "@vue/cli-plugin-eslint": "~4.5.13",
     "axios": "^0.21.3",
     "babel-eslint": "^10.1.0",
