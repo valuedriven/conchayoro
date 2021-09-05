@@ -15,7 +15,7 @@ env:
   TAG: latest
 
 jobs:
-  build:
+  build-backend:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,22 +27,38 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run:  npm install --prefix=backend --only=dev
-    - run:  npm install --prefix=frontend --only=dev
+    - run:  npm ci --prefix=backend
     - run:  npm run eslint:sonar
     - run:  npm run test:unit:sonar
 
+  build-frontend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run:  npm ci --prefix=frontend --only=dev
+
   build-image-db:
-    needs: build
+    needs: 
+     - build-backend
+     - build-frontend
     runs-on: ubuntu-latest
     env:
       DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
     steps:
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
-
   build-image-frontend:
-    needs: build
+    needs: 
+     - build-backend
+     - build-frontend
     runs-on: ubuntu-latest
     env:
       FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
@@ -50,7 +66,9 @@ jobs:
     - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
   build-image-backend:
-    needs: build  
+    needs: 
+     - build-backend
+     - build-frontend
     runs-on: ubuntu-latest
     env:
       BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
