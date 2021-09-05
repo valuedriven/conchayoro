@@ -1,0 +1,6 @@
+---
+project_name: devops
+provider: aws
+aws_region: sa-east-1
+aws_availability_zone: sa-east-1a
+access_key: "{{ project_name }}-key"

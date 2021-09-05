@@ -1,0 +1,14 @@
+---
+- name: Deploy da Aplicação
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+  - name: Copia dos arquivos do frontend
+    ansible.builtin.copy:
+      src: public/
+      dest: /usr/share/nginx/html/
+      # owner: foo
+      # group: foo
+      mode: '0644'
