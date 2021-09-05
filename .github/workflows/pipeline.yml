@@ -8,17 +8,16 @@ env:
   ANSIBLE_REMOTE_USER: ec2-user
   ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
   ANSIBLE_HOST_KEY_CHECKING: 'False'
+  TAG: latest
   PROJECT_NAME: conchayoro
   DATABASE_PROJECT: db
+  DATABASE_IMAGE: '${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}'
   BACKEND_PROJECT: backend
   FRONTEND_PROJECT: frontend
-  TAG: latest
-
+  
 jobs:
   teste-vars:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_IMAGE: '${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}'
     steps:
     - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
