@@ -1,8 +1,6 @@
 <template>
-  <div>    
-
-  <router-view></router-view>
-
+  <div>
+    <router-view />
   </div>
 </template>
 
@@ -10,27 +8,24 @@
 import { mapGetters } from "vuex";
 
 export default {
-  components: {
-  },
-  props: {
-  },
-  computed: { 
-    ...mapGetters ({
-    })
-  },
+  components: {},
+  props: {},
   data() {
-    return {
-    }    
-  }
+    return {};
+  },
+  computed: {
+    ...mapGetters({})
+  }  
 };
 </script>
 
 <style scoped>
-.fade-view-enter, .fade-view-leave-to {
+.fade-view-enter,
+.fade-view-leave-to {
   opacity: 0;
 }
-.fade-view-enter-active, .fade-view-leave-active {
+.fade-view-enter-active,
+.fade-view-leave-active {
   transition: opacity 0.5s ease-in-out;
 }
-
 </style>

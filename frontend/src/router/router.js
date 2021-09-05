@@ -1,29 +1,37 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-import Home from './../components/AppSectionHome'
-import Produtos from './../components/AppSectionProdutos'
-import App404 from './../components/App404'
+import Home from "./../components/AppSectionHome";
+import Produtos from "./../components/AppSectionProdutos";
+import Login from "./../components/AppLogin";
+import App404 from "./../components/App404";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 export default new VueRouter({
+  mode: "history",
 
-    linkExactActiveClass: 'link-active',
+  linkExactActiveClass: "link-active",
 
-    routes: [{
-        path: '/',
-        component: Home
+  routes: [
+    {
+      path: "/",
+      component: Home,
+      meta: { requiresAuth: true }
     },
     {
-        path: '/produtos',
-        component: Produtos
+      path: "/produtos",
+      component: Produtos,
+      meta: { requiresAuth: true }
     },
     {
-        path: '*',        
-        component: App404
+      path: "/login",
+      component: Login,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: "*",
+      component: App404
     }
-
-]
-
-})
+  ]
+});

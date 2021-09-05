@@ -37,6 +37,7 @@ jobs:
             db
             frontend/node_modules
             backend/node_modules
+            backend/package*.json
           # key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           # restore-keys: |
           #   ${{ runner.os }}-build-${{ env.cache-name }}-

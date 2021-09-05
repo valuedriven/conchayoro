@@ -2,55 +2,138 @@
   <section>
     <div class="container">
       <v-app id="app">
-      <v-data-table :headers="headers" :items="produtos" sort-by="nome" class="elevation-1">
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">{{ newItem }}</v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>                      
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.nome" label="Nome do Produto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.unidade" label="Unidade"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.tipoProduto" label="Tipo do Produto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.precoUnitario" label="Preço Unitário"></v-text-field>
-                      </v-col>                      
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">{{ cancelButton }}</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">{{ saveButton }}</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-        </template>
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-          <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-        </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
-      </v-data-table>
+        <v-data-table
+          :headers="headers"
+          :items="produtos"
+          sort-by="nome"
+          class="elevation-1"
+        >
+          <template #top>
+            <v-toolbar
+              flat
+              color="white"
+            >
+              <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
+              <v-divider
+                class="mx-4"
+                inset
+                vertical
+              />
+              <v-spacer />
+              <v-dialog
+                v-model="dialog"
+                max-width="500px"
+              >
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    color="primary"
+                    dark
+                    class="mb-2"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ newItem }}
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                        >
+                          <v-text-field
+                            v-model="editedItem.nome"
+                            label="Nome do Produto"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                        >
+                          <v-text-field
+                            v-model="editedItem.unidade"
+                            label="Unidade"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                        >
+                          <v-text-field
+                            v-model="editedItem.tipoProduto"
+                            label="Tipo do Produto"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                        >
+                          <v-text-field
+                            v-model="editedItem.precoUnitario"
+                            label="Preço Unitário"
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="close"
+                    >
+                      {{
+                        cancelButton
+                      }}
+                    </v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="save"
+                    >
+                      {{
+                        saveButton
+                      }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+          <template #no-data>
+            <v-btn
+              color="primary"
+              @click="initialize"
+            >
+              Reset
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-app>
     </div>
   </section>
@@ -60,19 +143,19 @@
 import axios from "../axios";
 
 export default {
-  data: () => ({    
-    newItem: 'Novo Produto',
-    cancelButton: 'Cancelar',
-    saveButton: 'Salvar',
-    hostService: 'produtos',
-    search: 'nome',
+  data: () => ({
+    newItem: "Novo Produto",
+    cancelButton: "Cancelar",
+    saveButton: "Salvar",
+    hostService: "produtos",
+    search: "nome",
     dialog: false,
     headers: [
       {
         text: "Nome do Produto",
         align: "start",
-        sortable: true,        
-        value: "nome", 
+        sortable: true,
+        value: "nome",
         editable: true
       },
       { text: "Unidade", value: "unidade" },
@@ -83,15 +166,15 @@ export default {
     produtos: [],
     editedIndex: -1,
     editedItem: {
-      nome: '',
-      unidade: '',
-      tipoProduto:'',
+      nome: "",
+      unidade: "",
+      tipoProduto: "",
       precoUnitario: 0
     },
     defaultItem: {
-      nome: '',
-      unidade: '',
-      tipoProduto:'',
+      nome: "",
+      unidade: "",
+      tipoProduto: "",
       precoUnitario: 0
     }
   }),
@@ -114,8 +197,7 @@ export default {
 
   methods: {
     fetchProdutos() {
-      axios.get("/"+this.hostService).then(response => {
-        console.log(response);
+      axios.get("/" + this.hostService).then(response => {
         this.produtos = response.data;
       });
     },
@@ -132,10 +214,8 @@ export default {
 
     deleteItem(item) {
       const index = this.produtos.indexOf(item);
-      confirm("Confirma a deleção do item?") && 
-        this.produtos.splice(index, 1);
+      confirm("Confirma a deleção do item?") && this.produtos.splice(index, 1);
       axios.delete(`/${this.hostService}/${item.id}`);
-
     },
 
     close() {

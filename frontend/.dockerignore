@@ -1,0 +1,8 @@
+node_modules/
+npm-debug.log
+.github
+.gitignore
+.eslintrc.json
+jest.config.js
+babel.config.js
+README.md
