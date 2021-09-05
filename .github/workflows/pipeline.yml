@@ -73,8 +73,8 @@ jobs:
     - name: Build, tag, e push de imagem para Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: "${{ $DATABASE_PROJECT }}"
-        IMAGE_TAG: "${{ $TAG }}"
+        # ECR_REPOSITORY: "${{ $DATABASE_PROJECT }}"
+        # IMAGE_TAG: "${{ $TAG }}"
       run: |
         docker build -t $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG $DATABASE_PROJECT
         docker push $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG
