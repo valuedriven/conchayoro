@@ -1,23 +1,25 @@
 module.exports = (sequelize, Sequelize) => {
-    const Produto = sequelize.define("Produto", {
+  const Produto = sequelize.define(
+    'Produto',
+    {
       nome: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       unidade: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       tipoProduto: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       precoUnitario: {
-        type: Sequelize.DOUBLE
-      }
+        type: Sequelize.DOUBLE,
+      },
     },
     {
       freezeTableName: true,
-      tableName: 'Produto'
+      tableName: 'Produto',
     }
-    );
-  
-    return Produto;
-  };
+  );
+
+  return Produto;
+};

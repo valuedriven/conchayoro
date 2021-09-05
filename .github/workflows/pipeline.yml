@@ -23,11 +23,12 @@ jobs:
       with:
         node-version: '14'
         cache: 'npm'
-    - run:  npm ci --prefix=backend
-    - run:  npm ci --prefix=frontend
-    - run:  npm run eslint:sonar
-    - run:  npm run test:unit:sonar
-
+    - run: npm install eslint --save-dev
+    - run: npm run eslint
+    - run: npm run test:unit
+    - run: npm ci --prefix=backend
+    - run: npm ci --prefix=frontend    
+    
   build-image-db:
     needs: 
      - build
