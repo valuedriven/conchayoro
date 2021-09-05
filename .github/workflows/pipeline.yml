@@ -28,7 +28,7 @@ jobs:
     - run: npm run eslint
     - run: npm ci --prefix=backend
     - run: npm ci --prefix=frontend    
-    - run: npm run test:unit --passWithNoTests
+    - run: npm run test:unit -- --passWithNoTests
     
   build-image-db:
     needs: 
