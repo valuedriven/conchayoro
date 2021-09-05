@@ -11,7 +11,7 @@ env:
   ANSIBLE_REMOTE_USER: ec2-user
   ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
   ANSIBLE_HOST_KEY_CHECKING: False
-  TAG: latest
+  IMAGE_TAG: latest
   PROJECT_NAME: conchayoro
   DATABASE_PROJECT: db
   DATABASE_IMAGE: conchayoro/db:latest
@@ -73,11 +73,11 @@ jobs:
     - name: Build, tag, e push de imagem para Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: $DATABASE_PROJECT
-        IMAGE_TAG: $TAG
+        ECR_REPOSITORY: "${{ $DATABASE_PROJECT }}"
+        IMAGE_TAG: "${{ $TAG }}"
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $DATABASE_PROJECT
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG $DATABASE_PROJECT
+        docker push $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG
 
   # build-image-frontend:
   #   needs: build
