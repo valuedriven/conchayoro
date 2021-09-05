@@ -27,17 +27,23 @@ jobs:
     - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
     - run: npm run eslint
     - run: npm ci --prefix=backend
-    - run: npm ci --prefix=frontend    
+    - run: npm ci --prefix=frontend
+    - run: npm run build --prefix=frontend
     #- run: npm run test:unit -- --passWithNoTests
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist-without-markdown
+        path: |
+          frontend/dist
     
   build-image-db:
     needs: 
      - build
     runs-on: ubuntu-latest
     env:
-      DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
+      DATABASE_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}
     steps:
-    - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
+    - run: docker build -t ${{ env.DATABASE_IMAGE }} ${{ env.DATABASE_PROJECT }}
   
   build-image-frontend:
     needs: 
