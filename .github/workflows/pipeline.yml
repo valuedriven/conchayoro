@@ -58,7 +58,7 @@ jobs:
     - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
   push-images:
-    needs: 
+    needs:
     - build-image-db
     - build-image-frontend
     - build-image-backend
@@ -67,8 +67,9 @@ jobs:
     - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
     - run: ansible-playbook ambiente/push-images.yml
 
-  deployment-cloud:
+  deployment-cloud:    
     needs: push-images
+    runs-on: ubuntu-latest
     steps:
     - run: ansible-galaxy collection install -r ambiente/requirements.yml
     - run: ansible-playbook ambiente/keys.yml
