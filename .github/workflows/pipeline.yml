@@ -39,8 +39,7 @@ jobs:
   
   build-image-frontend:
     needs: 
-     - build-backend
-     - build-frontend
+     - build
     runs-on: ubuntu-latest
     env:
       FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
@@ -49,8 +48,7 @@ jobs:
 
   build-image-backend:
     needs: 
-     - build-backend
-     - build-frontend
+    - build
     runs-on: ubuntu-latest
     env:
       BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
