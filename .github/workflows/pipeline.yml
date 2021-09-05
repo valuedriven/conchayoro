@@ -5,6 +5,8 @@ on:
     branches: [ main ]
 
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   ANSIBLE_REMOTE_USER: ec2-user
   ANSIBLE_PRIVATE_KEY_FILE: ambiente/conchayoro-key
   ANSIBLE_HOST_KEY_CHECKING: 'False'
@@ -13,69 +15,56 @@ env:
   DATABASE_PROJECT: db
   DATABASE_IMAGE: conchayoro/db:latest
   BACKEND_PROJECT: backend
+  BACKEND_IMAGE: conchayoro/backend:latest
   FRONTEND_PROJECT: frontend
+  FRONTEND_IMAGE: conchayoro/frontend:latest
   
 jobs:
-  teste-vars:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
-    - run: ls -la
-    - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
-
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/setup-node@v2
-  #     with:
-  #       node-version: '14'
-  #       cache: 'npm'
-  #   - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
-  #   - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
-  #   - run: npm run eslint
-  #   - run: npm ci --prefix=backend
-  #   - run: npm ci --prefix=frontend
-  #   - run: npm run build --prefix=frontend
-  #   #- run: npm run test:unit -- --passWithNoTests
-  #   - uses: actions/upload-artifact@v2
-  #     with:
-  #       name: dist-without-markdown
-  #       path: |
-  #         frontend/dist
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'npm'
+    - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
+    - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
+    - run: npm run eslint
+    - run: npm ci --prefix=backend
+    - run: npm ci --prefix=frontend
+    - run: npm run build --prefix=frontend
+    #- run: npm run test:unit -- --passWithNoTests
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist-without-markdown
+        path: |
+          frontend/dist
     
-  # build-image-db:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
-  #   steps:
-  #   - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
-  #   - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
+  build-image-db:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
-  # build-image-frontend:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
-  #   steps:
-  #   - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
+  build-image-frontend:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
-  # build-image-backend:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
-  #   steps:
-  #   - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
+  build-image-backend:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
-  # push-images:
-  #   needs: [ build-image-db, build-image-frontend, build-image-backend ]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
-  #   - run: ansible-playbook ambiente/push-images.yml
+  push-images:
+    needs: [ build-image-db, build-image-frontend, build-image-backend ]
+    runs-on: ubuntu-latest
+    steps:
+    - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+    - run: ansible-playbook ambiente/push-images.yml
 
   # deployment-cloud:    
   #   needs: push-images
