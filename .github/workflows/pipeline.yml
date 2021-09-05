@@ -41,9 +41,9 @@ jobs:
      - build
     runs-on: ubuntu-latest
     env:
-      DATABASE_IMAGE: ${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}
+      DATABASE_IMAGE: ${{ PROJECT_NAME }}/${{ DATABASE_PROJECT }}:${{ TAG }}
     steps:
-    - run: docker build -t ${{ env.DATABASE_IMAGE }} ${{ env.DATABASE_PROJECT }}
+    - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
   build-image-frontend:
     needs: 
