@@ -37,17 +37,16 @@ jobs:
           frontend/dist
     
   build-image-db:
-    needs: 
-     - build
+    needs: build
     runs-on: ubuntu-latest
     env:
-      DATABASE_IMAGE: ${{ PROJECT_NAME }}/${{ DATABASE_PROJECT }}:${{ TAG }}
+      DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
     steps:
+    - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
   build-image-frontend:
-    needs: 
-     - build
+    needs: build
     runs-on: ubuntu-latest
     env:
       FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
@@ -55,8 +54,7 @@ jobs:
     - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
   build-image-backend:
-    needs: 
-    - build
+    needs: build
     runs-on: ubuntu-latest
     env:
       BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
@@ -64,10 +62,7 @@ jobs:
     - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
   push-images:
-    needs:
-    - build-image-db
-    - build-image-frontend
-    - build-image-backend
+    needs: [ build-image-db, build-image-frontend, build-image-backend ]
     runs-on: ubuntu-latest
     steps:
     - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
@@ -117,3 +112,4 @@ jobs:
   #       with: 
   #         playbook: ambiente/deploy-images.yml
   #         inventory: ambiente/inventory.aws_ec2.yml          
+
