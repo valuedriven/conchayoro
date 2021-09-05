@@ -15,68 +15,76 @@ env:
   TAG: latest
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-        cache: 'npm'
-    - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
-    - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
-    - run: npm run eslint
-    - run: npm ci --prefix=backend
-    - run: npm ci --prefix=frontend
-    - run: npm run build --prefix=frontend
-    #- run: npm run test:unit -- --passWithNoTests
-    - uses: actions/upload-artifact@v2
-      with:
-        name: dist-without-markdown
-        path: |
-          frontend/dist
-    
-  build-image-db:
-    needs: build
+  teste-vars:
     runs-on: ubuntu-latest
     env:
-      DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
+      DATABASE_IMAGE: '${{ env.PROJECT_NAME }}/${{ env.DATABASE_PROJECT }}:${{ env.TAG }}'
     steps:
     - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '14'
+  #       cache: 'npm'
+  #   - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
+  #   - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
+  #   - run: npm run eslint
+  #   - run: npm ci --prefix=backend
+  #   - run: npm ci --prefix=frontend
+  #   - run: npm run build --prefix=frontend
+  #   #- run: npm run test:unit -- --passWithNoTests
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: dist-without-markdown
+  #       path: |
+  #         frontend/dist
+    
+  # build-image-db:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
+  #   steps:
+  #   - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
+  #   - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
-  build-image-frontend:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
-    steps:
-    - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
+  # build-image-frontend:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
+  #   steps:
+  #   - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
-  build-image-backend:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
-    steps:
-    - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
+  # build-image-backend:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
+  #   steps:
+  #   - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
-  push-images:
-    needs: [ build-image-db, build-image-frontend, build-image-backend ]
-    runs-on: ubuntu-latest
-    steps:
-    - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
-    - run: ansible-playbook ambiente/push-images.yml
+  # push-images:
+  #   needs: [ build-image-db, build-image-frontend, build-image-backend ]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+  #   - run: ansible-playbook ambiente/push-images.yml
 
-  deployment-cloud:    
-    needs: push-images
-    runs-on: ubuntu-latest
-    steps:
-    - run: ansible-galaxy collection install -r ambiente/requirements.yml
-    - run: ansible-playbook ambiente/keys.yml
-    - run: ansible-playbook ambiente/provisioning.yml
-    - run: ansible-playbook ambiente/install-packages.yml --inventory ambiente/inventory.aws_ec2.yml
-    - run: ansible-playbook ambiente/deploy-images.yml --inventory ambiente/inventory.aws_ec2.yml 
+  # deployment-cloud:    
+  #   needs: push-images
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - run: ansible-galaxy collection install -r ambiente/requirements.yml
+  #   - run: ansible-playbook ambiente/keys.yml
+  #   - run: ansible-playbook ambiente/provisioning.yml
+  #   - run: ansible-playbook ambiente/install-packages.yml --inventory ambiente/inventory.aws_ec2.yml
+  #   - run: ansible-playbook ambiente/deploy-images.yml --inventory ambiente/inventory.aws_ec2.yml 
 
   # push-images:
   #   uses: actions/setup-go@v2.1.4
