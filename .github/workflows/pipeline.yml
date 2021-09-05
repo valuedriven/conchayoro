@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
+    - run: ls -la
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
 
   # build:
