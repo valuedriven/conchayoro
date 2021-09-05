@@ -8,8 +8,7 @@ WORKDIR /app
 
 COPY package*.json process.yml ./
 
-RUN npm ci --only=production \
-    &&  npm cache clean --force
+COPY ./node_modules/ ./node_modules/
 
 FROM node as deployer
 
