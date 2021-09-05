@@ -27,9 +27,8 @@ jobs:
     - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
     - run: npm run eslint
     - run: npm ci --prefix=backend
-    - run: npm ci --prefix=frontend
-    
-    - run: npm run test:unit
+    - run: npm ci --prefix=frontend    
+    - run: npm run test:unit --passWithNoTests
     
   build-image-db:
     needs: 
