@@ -19,6 +19,7 @@ jobs:
   teste-vars:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - run: echo $DATABASE_IMAGE $DATABASE_PROJECT
     - run: ls -la
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
