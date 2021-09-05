@@ -34,7 +34,7 @@ jobs:
 
   build-image-db:
     needs: build
-    runs-on: docker-latest
+    runs-on: ubuntu-latest
     env:
       DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
     steps:
@@ -43,7 +43,7 @@ jobs:
 
   build-image-frontend:
     needs: build
-    runs-on: docker-latest
+    runs-on: ubuntu-latest
     env:
       FRONTEND_IMAGE: $PROJECT_NAME/$FRONTEND_PROJECT:$TAG
     steps:
@@ -51,11 +51,30 @@ jobs:
 
   build-image-backend:
     needs: build  
-    runs-on: docker-latest
+    runs-on: ubuntu-latest
     env:
       BACKEND_IMAGE: $PROJECT_NAME/$BACKEND_PROJECT:$TAG
     steps:
     - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
+
+  push-images:
+    needs: 
+    - build-image-db
+    - build-image-frontend
+    - build-image-backend
+    runs-on: ubuntu-latest
+    steps:
+    - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+    - run: ansible-playbook ambiente/push-images.yml
+
+  deployment-cloud:
+    needs: push-images
+    steps:
+    - run: ansible-galaxy collection install -r ambiente/requirements.yml
+    - run: ansible-playbook ambiente/keys.yml
+    - run: ansible-playbook ambiente/provisioning.yml
+    - run: ansible-playbook ambiente/install-packages.yml --inventory ambiente/inventory.aws_ec2.yml
+    - run: ansible-playbook ambiente/deploy-images.yml --inventory ambiente/inventory.aws_ec2.yml 
 
   # push-images:
   #   uses: actions/setup-go@v2.1.4
