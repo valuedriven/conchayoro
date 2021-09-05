@@ -15,40 +15,22 @@ env:
   TAG: latest
 
 jobs:
-  build-backend:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+    - uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '14'
         cache: 'npm'
     - run:  npm ci --prefix=backend
+    - run:  npm ci --prefix=frontend
     - run:  npm run eslint:sonar
     - run:  npm run test:unit:sonar
 
-  build-frontend:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run:  npm ci --prefix=frontend --only=dev
-
   build-image-db:
     needs: 
-     - build-backend
-     - build-frontend
+     - build
     runs-on: ubuntu-latest
     env:
       DATABASE_IMAGE: $PROJECT_NAME/$DATABASE_PROJECT:$TAG
