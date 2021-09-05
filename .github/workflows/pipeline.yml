@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: '14'
         cache: 'npm'
-    - run: npm install eslint --save-dev
+    - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint--save-dev
     - run: npm run eslint
     - run: npm run test:unit
     - run: npm ci --prefix=backend
