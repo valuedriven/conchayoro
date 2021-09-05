@@ -45,27 +45,43 @@ jobs:
     
   build-image-db:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     steps:
+    - uses: actions/cache@v2            
+      with:
+        path: ./*
+        key: ${{ github.sha }}
     - run: ls -la
     - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
   
   build-image-frontend:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     steps:
+    - uses: actions/cache@v2            
+      with:
+        path: ./*
+        key: ${{ github.sha }}  
     - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
 
   build-image-backend:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/cache@v2            
+      with:
+        path: ./*
+        key: ${{ github.sha }}
     - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
 
   push-images:
     needs: [ build-image-db, build-image-frontend, build-image-backend ]
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/cache@v2            
+      with:
+        path: ./*
+        key: ${{ github.sha }}
     - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
     - run: ansible-playbook ambiente/push-images.yml
 
