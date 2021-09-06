@@ -63,10 +63,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest    
     steps:
+    - run: ls -la
     - uses: actions/cache@v2            
       with:
         path: ./db
         key: ${{ github.sha }}
+    - run: ls -la
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
