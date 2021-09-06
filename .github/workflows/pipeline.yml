@@ -22,10 +22,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - run: ls -laR
     - uses: actions/checkout@v2
+    - run: ls -laR
     - uses: actions/cache@v2            
       with:
-        key: ${{ github.workflow }
+        key: ${{ github.workflow }}
         path: |
           ./db
           ./backend/node_modules
@@ -41,6 +43,7 @@ jobs:
     - run: npm ci --prefix=backend
     - run: npm ci --prefix=frontend
     - run: npm run build --prefix=frontend
+    - run: ls -laR
     # - uses: actions/upload-artifact@v2
     #   with:
     #     path: |
@@ -60,12 +63,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest    
     steps:
-    - run: ls -la
     - uses: actions/cache@v2            
       with:
-        key: ${{ github.workflow }
-        path: ./db        
-    - run: ls -la
+        key: ${{ github.workflow }}
+        path: ./db
+    - run: ls -laR
     - name: Configuração de credenciais AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
