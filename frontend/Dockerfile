@@ -3,17 +3,13 @@ ARG PORT=81
 ARG BACKEND_HOST=localhost
 ARG BACKEND_PORT=3001
 
-FROM node:12-alpine as build-stage
+FROM node:14-alpine as build-stage
 
 WORKDIR /app
 
 COPY package*.json ./
 
-COPY . .
-
-RUN npm install --verbose
-
-RUN npm run build --verbose
+COPY dist ./
 
 FROM nginx:1.19.3-alpine as production-stage
 

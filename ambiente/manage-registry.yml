@@ -1,0 +1,23 @@
+---
+- name: Mantém Verifica existência de repositórios
+  hosts: localhost
+  gather_facts: true
+  become: true
+  vars_files:
+    - vars/global.yml
+
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    AWS_REGION: "{{ aws_region }}"
+
+  tasks:        
+    - name: Criação/atualização de registry AWS ECR
+      community.aws.ecs_ecr:
+        name: '{{ item }}'
+      register: ecrRepositories
+      with_items:
+        - '{{ project_name }}/{{ database_project }}'
+        - '{{ project_name }}/{{ backend_project }}'
+        - '{{ project_name }}/{{ frontend_project }}'  
+    

@@ -5,5 +5,6 @@
 npm install -g npm-check-updates
 
 # TODO
-separar jobs build backend e frontend
-configurar testes
+incluir testes de unidade
+criar actions para build
+automatizar criação de registries

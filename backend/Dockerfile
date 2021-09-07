@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package*.json process.yml ./
 
-COPY ./node_modules/ ./node_modules/
+COPY node_modules ./
 
 FROM node as deployer
 

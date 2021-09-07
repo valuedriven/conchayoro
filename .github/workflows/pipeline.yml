@@ -19,55 +19,27 @@ env:
   FRONTEND_IMAGE: conchayoro/frontend:latest
   
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
     steps:
-    - run: ls -laR
-    - uses: actions/checkout@v2
-    - run: ls -laR
-    - uses: actions/cache@v2            
-      with:
-        key: ${{ github.workflow }}
-        path: |
-          ./db
-          ./backend/node_modules
-          ./backend/package*.json
-          ./frontend/node_modules
+    - uses: actions/checkout@v2    
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
-        cache: 'npm'
+        # cache: 'npm'
     - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
     - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
     - run: npm run eslint
-    - run: npm ci --prefix=backend
-    - run: npm ci --prefix=frontend
-    - run: npm run build --prefix=frontend
-    - run: ls -laR
-    # - uses: actions/upload-artifact@v2
-    #   with:
-    #     path: |
-    #       frontend/dist
-    
-  # build-image-db:
-  #   needs: build
-  #   runs-on: ubuntu-latest    
-  #   steps:
-  #   - uses: actions/cache@v2            
-  #     with:
-  #       path: ./db
-  #       key: ${{ github.sha }}
-  #   - run: docker build -t $DATABASE_IMAGE $DATABASE_PROJECT
 
-  build-push-image-db:
-    needs: build
-    runs-on: ubuntu-latest    
+  build-backend:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/cache@v2            
+    - uses: actions/checkout@v2    
+    - uses: actions/setup-node@v2
       with:
-        key: ${{ github.workflow }}
-        path: ./db
-    - run: ls -laR
+        node-version: '14'
+        # cache: 'npm'
+    - run: npm ci --prefix=backend
     - name: Configuração de credenciais AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -80,46 +52,61 @@ jobs:
     - name: Build, tag, e push de imagem para Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        # ECR_REPOSITORY: "${{ $DATABASE_PROJECT }}"
-        # IMAGE_TAG: "${{ $TAG }}"
+      run: |
+        docker build -t $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG $BACKEND_PROJECT
+        docker push $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2    
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        # cache: 'npm'
+    - run: npm ci --prefix=frontend
+    - run: npm run build --prefix=frontend
+    - name: Configuração de credenciais AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: sa-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Build, tag, e push de imagem para Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -t $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG $FRONTEND_PROJECT
+        docker push $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG
+              
+  build-db:
+    runs-on: ubuntu-latest    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configuração de credenciais AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: sa-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Build, tag, e push de imagem para Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
         docker build -t $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG $DATABASE_PROJECT
         docker push $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG
 
-  # build-image-frontend:
-  #   needs: build
-  #   runs-on: ubuntu-latest    
-  #   steps:
-  #   - uses: actions/cache@v2            
-  #     with:
-  #       path: 
-  #         ./frontend/node_modules
-  #       key: ${{ github.sha }}  
-  #   - run: docker build -t $FRONTEND_IMAGE $FRONTEND_PROJECT
-
-  # build-image-backend:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/cache@v2            
-  #     with:
-  #       path: 
-  #         ./backend/node_modules
-  #         ./backend/package*.json
-  #       key: ${{ github.sha }}
-  #   - run: docker build -t $BACKEND_IMAGE $BACKEND_PROJECT
-
-  # push-images:
-  #   needs: [ build-image-db, build-image-frontend, build-image-backend ]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/cache@v2            
-  #     with:
-  #       path: ./*
-  #       key: ${{ github.sha }}
-  #   - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
-  #   - run: ansible-playbook ambiente/push-images.yml
-
+  setup-registry:
+    runs-on: ubuntu-latest
+    steps:    
+    - run: ansible-playbook ambiente/manage-registry.yml
+    
   # deployment-cloud:    
   #   needs: push-images
   #   runs-on: ubuntu-latest
@@ -129,16 +116,7 @@ jobs:
   #   - run: ansible-playbook ambiente/provisioning.yml
   #   - run: ansible-playbook ambiente/install-packages.yml --inventory ambiente/inventory.aws_ec2.yml
   #   - run: ansible-playbook ambiente/deploy-images.yml --inventory ambiente/inventory.aws_ec2.yml 
-
-  # push-images:
-  #   uses: actions/setup-go@v2.1.4
-  #   steps:
-  #   - run: go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
-  #   - uses: ./.github/actions/ansible
-  #     with: 
-  #       playbook: ambiente/push-images.yml
-  #       inventory: localhost
-    
+  
   # deployment-cloud:
   #   env:
   #     ANSIBLE_REMOTE_USER: ec2-user
