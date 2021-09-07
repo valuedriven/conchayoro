@@ -109,9 +109,10 @@ jobs:
     runs-on: ubuntu-latest        
     steps:    
     - uses: actions/checkout@v2
+    - run: ls -la 
     - run: ansible-playbook ambiente/manage-registry.yml -e 'ansible_python_interpreter=/usr/bin/python3'
 
-  # deployment-cloud:    
+  # deployment-cloud:
   #   needs: push-images
   #   runs-on: ubuntu-latest
   #   steps:
