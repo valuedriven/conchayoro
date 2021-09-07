@@ -2,16 +2,6 @@ ARG PORT=3000
 
 FROM node:14-alpine as node
 
-FROM node as builder
-
-WORKDIR /app
-
-COPY package*.json process.yml ./
-
-COPY node_modules ./
-
-FROM node as deployer
-
 WORKDIR /app
 
 RUN apk add --no-cache \
@@ -20,9 +10,9 @@ RUN apk add --no-cache \
     && cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
     && apk del tzdata
 
-COPY --from=builder node_modules ./
+COPY package*.json process.yml ./
 
-COPY . . 
+COPY node_modules ./
 
 EXPOSE ${PORT}
 
