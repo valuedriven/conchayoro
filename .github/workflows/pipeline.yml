@@ -17,6 +17,7 @@ env:
   BACKEND_IMAGE: conchayoro/backend:latest
   FRONTEND_PROJECT: frontend
   FRONTEND_IMAGE: conchayoro/frontend:latest
+  ANSIBLE_PYTHON_INTERPRETER: /usr/bin/python3
   
 jobs:
   verify:
