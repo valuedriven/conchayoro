@@ -15,6 +15,7 @@
     database_project: "{{ lookup('env', 'DATABASE_PROJECT') }}"
     backend_project: "{{ lookup('env', 'BACKEND_PROJECT') }}"
     frontend_project: "{{ lookup('env', 'FRONTEND_PROJECT') }}"
+    tag: latest    
 
   tasks:    
     - name: Instalação de pacotes yum
