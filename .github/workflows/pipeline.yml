@@ -22,68 +22,68 @@ env:
   ANSIBLE_PYTHON_INTERPRETER: /usr/bin/python3
   
 jobs:
-  verify:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2    
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-        cache: 'npm'
-    - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
-    - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
-    - run: npm run eslint
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2    
+  #   - uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '14'
+  #       cache: 'npm'
+  #   - run: npm install eslint eslint-config-prettier eslint-plugin-prettier prettier-eslint --save-dev
+  #   - run: npm install eslint-plugin-vue --save-dev --prefix=frontend
+  #   - run: npm run eslint
 
-  build-backend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2    
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-        cache: 'npm'
-    - run: npm ci --prefix=backend
-    - name: Configuração de credenciais AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: sa-east-1
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Build, tag, e push de imagem para Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: |
-        docker build -t $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG $BACKEND_PROJECT
-        docker push $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG
+  # build-backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2    
+  #   - uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '14'
+  #       cache: 'npm'
+  #   - run: npm ci --prefix=backend
+  #   - name: Configuração de credenciais AWS
+  #     uses: aws-actions/configure-aws-credentials@v1
+  #     with:
+  #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #       aws-region: sa-east-1
+  #   - name: Login to Amazon ECR
+  #     id: login-ecr
+  #     uses: aws-actions/amazon-ecr-login@v1
+  #   - name: Build, tag, e push de imagem para Amazon ECR
+  #     env:
+  #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #     run: |
+  #       docker build -t $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG $BACKEND_PROJECT
+  #       docker push $ECR_REGISTRY/$BACKEND_PROJECT:$IMAGE_TAG
 
-  build-frontend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2    
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-        cache: 'npm'
-    - run: npm ci --prefix=frontend
-    - run: npm run build --prefix=frontend
-    - name: Configuração de credenciais AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: sa-east-1
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Build, tag, e push de imagem para Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: |
-        docker build -t $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG $FRONTEND_PROJECT
-        docker push $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG
+  # build-frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2    
+  #   - uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '14'
+  #       cache: 'npm'
+  #   - run: npm ci --prefix=frontend
+  #   - run: npm run build --prefix=frontend
+  #   - name: Configuração de credenciais AWS
+  #     uses: aws-actions/configure-aws-credentials@v1
+  #     with:
+  #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #       aws-region: sa-east-1
+  #   - name: Login to Amazon ECR
+  #     id: login-ecr
+  #     uses: aws-actions/amazon-ecr-login@v1
+  #   - name: Build, tag, e push de imagem para Amazon ECR
+  #     env:
+  #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #     run: |
+  #       docker build -t $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG $FRONTEND_PROJECT
+  #       docker push $ECR_REGISTRY/$FRONTEND_PROJECT:$IMAGE_TAG
               
   build-db:
     runs-on: ubuntu-latest    
@@ -102,6 +102,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
+        echo "ECR_REGISTRY: $ECR_REGISTRY"
         docker build -t $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG $DATABASE_PROJECT
         docker push $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG
 
