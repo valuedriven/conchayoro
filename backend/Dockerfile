@@ -20,7 +20,7 @@ RUN apk add --no-cache \
     && cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
     && apk del tzdata
 
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder node_modules ./
 
 COPY . . 
 

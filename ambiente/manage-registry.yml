@@ -18,7 +18,13 @@
     frontend_project: "{{ lookup('env', 'FRONTEND_PROJECT') }}"
     
 
-  tasks:        
+  tasks:
+    - name: Instalação de módulos pip
+      pip:
+        name: "{{ item }}"
+      loop: ['botocore',
+             'boto3']
+
     - name: Criação/atualização de registry AWS ECR
       community.aws.ecs_ecr:
         name: '{{ item }}'

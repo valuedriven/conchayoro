@@ -23,7 +23,7 @@ ENV PORT ${PORT}
 ENV BACKEND_HOST ${BACKEND_HOST}
 ENV BACKEND_PORT ${BACKEND_PORT}
 
-COPY --from=build-stage /dist /usr/share/nginx/html
+COPY --from=build-stage dist /usr/share/nginx/html
 
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
