@@ -1,0 +1,58 @@
+---
+- name: Push de imagens para registry AWS ECR
+  hosts: localhost
+  gather_facts: true
+  become: true
+  vars_files:
+    - vars/global.yml
+
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    AWS_REGION: "{{ aws_region }}"
+
+  tasks:    
+    - name: Instalação de pacotes yum
+      yum:
+        name: "{{ item }}"
+      loop: ['*',
+             'amazon-ecr-credential-helper']
+      when: ansible_facts['distribution'] == "CentOS"
+
+    - name: Instalação de pacotes apt
+      apt:
+        name: "{{ item }}"
+      loop: ['*',
+             'amazon-ecr-credential-helper']
+      when: ansible_facts['distribution'] == "Ubuntu"    
+    
+    - name: Instalação de módulos pip
+      pip:
+        name: "{{ item }}"
+      loop: ['docker',
+             'docker-pycreds',
+             'botocore',
+             'boto3']
+
+    - name: Copia do script com credenciais Docker para acesso ao AWS ECR
+      copy:
+        src: ./config.json
+        dest: /root/.docker/
+
+    - name: Obtenção de repositórios AWS ECR
+      community.aws.ecs_ecr:
+        name: '{{ item }}'
+      register: ecrRepositories
+      with_items:
+        - '{{ project_name }}/{{ database_project }}'
+        - '{{ project_name }}/{{ backend_project }}'
+        - '{{ project_name }}/{{ frontend_project }}'
+
+    - name: Tag e push de imagens para AWS ECR
+      community.docker.docker_image:
+        name: '{{ item.repository.repositoryName }}'
+        repository: '{{ item.repository.repositoryUri }}'
+        tag: '{{ tag }}'
+        push: yes
+        source: local
+      loop: "{{ ecrRepositories.results }}"
