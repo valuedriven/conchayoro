@@ -11,6 +11,11 @@
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
     AWS_REGION: "{{ aws_region }}"
 
+  vars:
+    database_project: "{{ lookup('env', 'DATABASE_PROJECT') }}"
+    backend_project: "{{ lookup('env', 'BACKEND_PROJECT') }}"
+    frontend_project: "{{ lookup('env', 'FRONTEND_PROJECT') }}"
+
   tasks:    
     - name: Instalação de pacotes yum
       yum:
