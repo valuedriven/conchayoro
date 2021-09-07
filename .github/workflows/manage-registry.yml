@@ -13,7 +13,6 @@ jobs:
   setup-registry:
     runs-on: ubuntu-latest
     steps:    
-    # - run: ansible-playbook ambiente/manage-registry.yml
-    - run: which ansible
+    - run: ansible-playbook ambiente/manage-registry.yml
 
   
