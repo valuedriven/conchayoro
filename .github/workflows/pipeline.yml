@@ -103,10 +103,11 @@ jobs:
         docker push $ECR_REGISTRY/$DATABASE_PROJECT:$IMAGE_TAG
 
   setup-registry:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest        
     steps:    
+    - uses: actions/checkout@v2    
     - run: ansible-playbook ambiente/manage-registry.yml
-    
+
   # deployment-cloud:    
   #   needs: push-images
   #   runs-on: ubuntu-latest
