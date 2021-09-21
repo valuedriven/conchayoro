@@ -1,55 +1,20 @@
 {
-  "name": "conchayoro-backend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Projeto de referência para tecnologia Node.js+Vue",
-  "main": "server.js",
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.com/valuedriven/conchayoron.git"
-  },
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.js --ignore */test/*",
-    "start": "node server.js",
-    "eslint": "eslint",
-    "test:unit": "npx jest --testPathPattern=src/test/unit --coverage --reporters=jest-junit",
-    "db:delete-sqlitefile": "NODE_ENV=test node src/test/util/delete-sqlitefile.js",
-    "test:integration": "NODE_ENV=test jest --testPathPattern=src/test/integration --coverage=false",
-    "migrate-dev": "NODE_ENV=development npx sequelize-cli db:migrate",
-    "migrate-dev:undo": "NODE_ENV=development; npx sequelize-cli db:migrate:undo:all",
-    "db:setup:dev": "NODE_ENV=development npx sequelize-cli db:create; npm run migrate-dev;",
-    "migrate-prod": "NODE_ENV=production npx sequelize-cli db:migrate",
-    "migrate-prod:undo": "NODE_ENV=production; npx sequelize-cli db:migrate:undo:all",
-    "db:setup:prod": "NODE_ENV=production npx sequelize-cli db:create; npm run migrate-prod;"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.983.0",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "morgan": "^1.10.0",
-    "path": "^0.12.7",
-    "pg": "^8.7.1",
-    "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
-    "uuid": "^8.3.2",
-    "winston": "^3.3.3",
-    "winston-cloudwatch": "^3.0.2"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "factory-bot": "^6.2.1",
-    "factory-girl": "^5.0.4",
-    "faker": "^5.5.3",
-    "jest": "^27.1.0",
-    "jest-junit": "^12.2.0",
-    "nodemon": "^2.0.12",
-    "sequelize-cli": "^6.2.0",
-    "sqlite3": "^5.0.2",
+    "jest": "^27.2.1",
     "supertest": "^6.1.6"
   }
 }
