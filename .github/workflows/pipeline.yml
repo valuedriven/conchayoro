@@ -104,7 +104,6 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$PROJECT_NAME/$DATABASE_PROJECT:$IMAGE_TAG $DATABASE_PROJECT
         docker push $ECR_REGISTRY/$PROJECT_NAME/$DATABASE_PROJECT:$IMAGE_TAG
-    # - run: ansible-playbook ambiente/push-images.yml -e 'ansible_python_interpreter=/usr/bin/python3'
 
   setup-registry:
     runs-on: ubuntu-latest        
