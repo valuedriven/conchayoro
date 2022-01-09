@@ -38,5 +38,10 @@
     "prettier": "^2.3.2",
     "prettier-eslint": "^13.0.0",
     "sonarqube-scanner": "^2.8.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "sequelize": "^6.6.5",
+    "sqlite3": "^5.0.2"
   }
 }
