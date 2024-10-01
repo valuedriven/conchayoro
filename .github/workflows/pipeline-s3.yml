@@ -23,6 +23,7 @@ jobs:
           path: |
             index.html
             .infra/playbook-s3.yml
+            .infra/vars/global.yml
 
   setup-environment:
     runs-on: ubuntu-latest
