@@ -20,7 +20,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: site
-          path: index.html
+          path: |
+            index.html
+            .infra/playbook-s3.yml
 
   setup-environment:
     runs-on: ubuntu-latest
