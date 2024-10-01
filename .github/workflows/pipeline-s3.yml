@@ -42,7 +42,7 @@ jobs:
         with:
           name: site
           path: .
-      - name: provisioning
+      # - name: provisioning
         # run: |
         #   source py3/bin/activate
         #   ansible-playbook $ANSIBLE_PLAYBOOK_PATH/playbook-s3.yml
