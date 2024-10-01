@@ -43,6 +43,8 @@ jobs:
           name: site
           path: .
       - name: provisioning
-        run: |
-          source py3/bin/activate
-          ansible-playbook $ANSIBLE_PLAYBOOK_PATH/playbook-s3.yml
+        # run: |
+        #   source py3/bin/activate
+        #   ansible-playbook $ANSIBLE_PLAYBOOK_PATH/playbook-s3.yml
+      - name: provisioning
+        run: ansible-playbook $ANSIBLE_PLAYBOOK_PATH/playbook-s3.yml
