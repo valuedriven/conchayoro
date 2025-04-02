@@ -4,6 +4,11 @@ on:
   push
   #workflow_dispatch
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: provisioning
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      #AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       #AWS_EC2_METADATA_DISABLED: true
       BUCKET_S3: ${{ vars.BUCKET_S3 }}
     steps:
