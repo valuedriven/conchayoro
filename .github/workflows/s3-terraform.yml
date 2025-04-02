@@ -20,6 +20,7 @@ jobs:
     needs: build
     steps:
     - uses: actions/checkout@v4
+    - uses: hashicorp/setup-terraform@v3
     - run:  terraform -chdir=.infra init -input=false 
     - run:  terraform -chdir=.infra plan -input=false
     - run:  terraform -chdir=.infra deploy -input=false
