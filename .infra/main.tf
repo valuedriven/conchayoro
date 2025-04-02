@@ -16,7 +16,7 @@ resource "aws_s3_bucket_acl" "cyo_bucket_ba" {
   depends_on = [aws_s3_bucket_ownership_controls.cyo_bucket_oc]
 
   bucket = aws_s3_bucket.cyo_bucket.id
-  acl    = "public_read"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_policy" "cyo_bucket_policy" {
