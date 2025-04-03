@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "cyo_bucket" {
-  bucket = ${{ var.BUCKET_S3 }}
+  bucket = ${var.BUCKET_S3}
   tags = {
     Group       = "ci_cd"
   }
@@ -29,7 +29,7 @@ resource "aws_s3_bucket_policy" "cyo_bucket_policy" {
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::${{ var.BUCKET_S3 }}/*"
+      "Resource": "arn:aws:s3:::${var.BUCKET_S3}/*"
     }
   ]
 }
