@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "cyo_bucket" {
-  bucket = "${var.BUCKET_S3}"
+  bucket = var.BUCKET_S3
   tags = {
     Group       = "ci_cd"
   }
