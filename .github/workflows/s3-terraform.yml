@@ -28,7 +28,7 @@ jobs:
     - uses: hashicorp/setup-terraform@v3
     - run:  terraform -chdir=.infra init -input=false 
     - run:  terraform -chdir=.infra plan -input=false
-    - run:  terraform -chdir=.infra deploy -input=false
+    - run:  terraform -chdir=.infra apply -input=false
 
   deploy:
     runs-on: ubuntu-latest
