@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "cyo_bucket" {
-  bucket = "cyo_static_bucket"
+  bucket = "cyo-static-bucket"
   tags = {
     Group       = "ci_cd"
   }
